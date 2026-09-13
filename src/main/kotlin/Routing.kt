@@ -9,7 +9,7 @@ import io.ktor.server.http.content.*
 fun Application.configureRouting() {
     routing {
         get("/") {
-            call.respondText("Hello, World!")
+            call.respond(ThymeleafContent("index", emptyMap()))
         }
 
         staticResources("/static", "static")
