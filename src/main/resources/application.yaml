@@ -1,0 +1,9 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - ee.kpikka.StatusPagesKt.configureStatusPages
+      - ee.kpikka.ThymeleafKt.configureThymeleaf
+      - ee.kpikka.RoutingKt.configureRouting
+  development: true
