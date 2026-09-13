@@ -16,9 +16,7 @@ import kotlin.test.*
 class ServerTest {
 
     @Test
-    fun `root renders the form template`() = testApplication {
-        configure()
-
+    fun `root renders the form template`() = withTestApplication {
         val response = client.get("/")
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -27,9 +25,7 @@ class ServerTest {
     }
 
     @Test
-    fun `stylesheet is served as a static resource`() = testApplication {
-        configure()
-
+    fun `stylesheet is served as a static resource`() = withTestApplication {
         val response = client.get("/static/styles.css")
 
         assertEquals(HttpStatusCode.OK, response.status)
