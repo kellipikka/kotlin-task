@@ -1,0 +1,25 @@
+package ee.kpikka.repository
+
+import ee.kpikka.db.SectorDAO.Companion.all
+import ee.kpikka.db.daoToModel
+import ee.kpikka.db.withTransaction
+import ee.kpikka.model.Sector
+
+class SectorRepository {
+    suspend fun getSectors(): List<Sector> = withTransaction {
+        all()
+            .map(::daoToModel)
+            .hierarchicallySorted()
+    }
+}
+
+private fun List<Sector>.hierarchicallySorted(): List<Sector> {
+    val childrenByParent = groupBy(Sector::parentId)
+
+    fun descendantsOf(parentId: Int?): List<Sector> = childrenByParent[parentId]
+        .orEmpty()
+        .sortedBy { it.name.lowercase() }
+        .flatMap { sector -> listOf(sector) + descendantsOf(sector.id) }
+
+    return descendantsOf(null)
+}
