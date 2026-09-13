@@ -3,3 +3,4 @@
 /.kotlin/
 /build/
 /data/*
+!/data/.gitkeep
