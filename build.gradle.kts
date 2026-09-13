@@ -21,6 +21,7 @@ dependencies {
     implementation(ktorLibs.server.statusPages)
     implementation(ktorLibs.server.thymeleaf)
     implementation(libs.logback.classic)
+    implementation(libs.flyway.core)
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.dao)

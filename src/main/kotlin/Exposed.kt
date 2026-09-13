@@ -1,6 +1,7 @@
 package ee.kpikka
 
 import io.ktor.server.application.*
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.sqlite.SQLiteDataSource
 
@@ -11,6 +12,13 @@ fun Application.configureDatabase() {
         url = jdbcUrl
         setEnforceForeignKeys(true)
     }
+
+    Flyway.configure()
+        .dataSource(dataSource)
+        .locations("classpath:db/migration")
+        .validateMigrationNaming(true)
+        .load()
+        .migrate()
 
     Database.connect(dataSource)
 }
