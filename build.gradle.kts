@@ -21,6 +21,13 @@ dependencies {
     implementation(ktorLibs.server.statusPages)
     implementation(ktorLibs.server.thymeleaf)
     implementation(libs.logback.classic)
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.dao)
+    implementation(libs.sqlite.jdbc)
+    implementation(ktorLibs.server.contentNegotiation)
+    implementation(ktorLibs.server.di)
+    implementation(ktorLibs.serialization.kotlinx.json)
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)

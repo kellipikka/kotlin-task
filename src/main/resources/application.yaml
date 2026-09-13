@@ -3,7 +3,11 @@ ktor:
     port: 8080
   application:
     modules:
+      - ee.kpikka.ExposedKt.configureDatabase
       - ee.kpikka.StatusPagesKt.configureStatusPages
       - ee.kpikka.ThymeleafKt.configureThymeleaf
       - ee.kpikka.RoutingKt.configureRouting
   development: true
+
+database:
+  jdbcUrl: "$DATABASE_JDBC_URL:jdbc:sqlite:./data/app.db"
