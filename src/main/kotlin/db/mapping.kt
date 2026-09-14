@@ -22,6 +22,11 @@ class SectorDAO(id: EntityID<Int>) : IntEntity(id) {
     var parentId by SectorsTable.parentId
 }
 
+object SessionsTable : IntIdTable("sessions") {
+    var name = varchar("name", 100)
+    val agreedToTerms = integer("agreed_to_terms").default(0)
+}
+
 suspend fun <T> withTransaction(block: suspend JdbcTransaction.() -> T): T = withContext(Dispatchers.IO) {
     inTopLevelSuspendTransaction { block() }
 }
