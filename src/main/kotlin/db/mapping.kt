@@ -3,6 +3,7 @@ package ee.kpikka.db
 import ee.kpikka.model.Sector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.dao.IntEntity
@@ -25,6 +26,11 @@ class SectorDAO(id: EntityID<Int>) : IntEntity(id) {
 object SessionsTable : IntIdTable("sessions") {
     var name = varchar("name", 100)
     val agreedToTerms = integer("agreed_to_terms").default(0)
+}
+
+object SessionSectorTable : Table("session_sector") {
+    val sessionId = reference("session_id", SessionsTable.id)
+    val sectorId = reference("sector_id", SectorsTable.id)
 }
 
 suspend fun <T> withTransaction(block: suspend JdbcTransaction.() -> T): T = withContext(Dispatchers.IO) {

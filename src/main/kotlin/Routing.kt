@@ -2,6 +2,7 @@ package ee.kpikka
 
 import ee.kpikka.model.Session
 import ee.kpikka.repository.SessionRepository
+import ee.kpikka.repository.SessionSectorRepository
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
@@ -19,12 +20,13 @@ fun Application.configureRouting() {
             post {
                 val formContent = call.receiveParameters()
 
-                val name = formContent["name"]
-                val sectors = formContent["sectors"]
+                val name = formContent["name"] ?: ""
+                val sectors = formContent.getAll("sectors") ?: emptyList()
                 val terms = formContent["terms"]
 
                 val agreedToTerms = if (terms == "on") 1 else 0
-                SessionRepository.saveResponse(Session(name = name!!, agreedToTerms = agreedToTerms))
+                val sessionId = SessionRepository.saveResponse(Session(name = name, agreedToTerms = agreedToTerms))
+                SessionSectorRepository.saveSectors(sessionId, sectors)
                 call.respondRedirect("/")
             }
         }
