@@ -10,6 +10,6 @@ object FormResponseRepository {
         FormResponseTable.insertAndGetId {
             it[name] = formResponse.name
             it[agreedToTerms] = formResponse.agreedToTerms
-        }
+        }.value
     }
 }
