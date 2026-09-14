@@ -1,8 +1,8 @@
 package ee.kpikka
 
-import ee.kpikka.model.Session
-import ee.kpikka.repository.SessionRepository
-import ee.kpikka.repository.SessionSectorRepository
+import ee.kpikka.model.FormResponse
+import ee.kpikka.repository.FormResponseRepository
+import ee.kpikka.repository.FormResponseSectorRepository
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
@@ -16,7 +16,7 @@ fun Application.configureRouting() {
             call.respond(ThymeleafContent("index", emptyMap()))
         }
 
-        route("/sessions") {
+        route("/form") {
             post {
                 val formContent = call.receiveParameters()
 
@@ -25,8 +25,9 @@ fun Application.configureRouting() {
                 val terms = formContent["terms"]
 
                 val agreedToTerms = if (terms == "on") 1 else 0
-                val sessionId = SessionRepository.saveResponse(Session(name = name, agreedToTerms = agreedToTerms))
-                SessionSectorRepository.saveSectors(sessionId, sectors)
+                val formResponseId =
+                    FormResponseRepository.saveResponse(FormResponse(name = name, agreedToTerms = agreedToTerms))
+                FormResponseSectorRepository.saveSectors(formResponseId, sectors)
                 call.respondRedirect("/")
             }
         }

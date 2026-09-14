@@ -23,13 +23,13 @@ class SectorDAO(id: EntityID<Int>) : IntEntity(id) {
     var parentId by SectorsTable.parentId
 }
 
-object SessionsTable : IntIdTable("sessions") {
+object FormResponseTable : IntIdTable("form_responses") {
     var name = varchar("name", 100)
     val agreedToTerms = integer("agreed_to_terms").default(0)
 }
 
-object SessionSectorTable : Table("session_sector") {
-    val sessionId = reference("session_id", SessionsTable.id)
+object FormResponseSectorTable : Table("form_response_sector") {
+    val formResponseId = reference("form_response_id", FormResponseTable.id)
     val sectorId = reference("sector_id", SectorsTable.id)
 }
 
