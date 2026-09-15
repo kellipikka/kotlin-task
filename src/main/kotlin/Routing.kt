@@ -16,11 +16,17 @@ import io.ktor.server.thymeleaf.*
 fun Application.configureRouting() {
     routing {
         get("/") {
+            val formResponseId = call.sessions.get<FormSession>()?.formResponseId
+            val response = formResponseId?.let { FormResponseRepository.getResponse(it) } ?: FormResponse(
+                name = "",
+                agreedToTerms = 0
+            )
             val sectors = SectorRepository.getSectors().toOptions()
             call.respond(
                 ThymeleafContent(
                     "index",
                     mapOf(
+                        "response" to response,
                         "sectors" to sectors
                     )
                 )

@@ -7,4 +7,5 @@ data class FormResponse(
     val id: Int? = null,
     val name: String,
     val agreedToTerms: Int,
+    val sectorIds: List<Int> = emptyList(),
 )
