@@ -44,6 +44,13 @@ fun Application.configureRouting() {
             }
         }
 
+        route("/sectors") {
+            get {
+                val sectors = SectorRepository.getSectors()
+                call.respond(sectors)
+            }
+        }
+
         staticResources("/static", "static")
     }
 }
