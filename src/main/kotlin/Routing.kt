@@ -1,8 +1,10 @@
 package ee.kpikka
 
 import ee.kpikka.model.FormResponse
+import ee.kpikka.model.toOptions
 import ee.kpikka.repository.FormResponseRepository
 import ee.kpikka.repository.FormResponseSectorRepository
+import ee.kpikka.repository.SectorRepository
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.request.*
@@ -14,7 +16,15 @@ import io.ktor.server.thymeleaf.*
 fun Application.configureRouting() {
     routing {
         get("/") {
-            call.respond(ThymeleafContent("index", emptyMap()))
+            val sectors = SectorRepository.getSectors().toOptions()
+            call.respond(
+                ThymeleafContent(
+                    "index",
+                    mapOf(
+                        "sectors" to sectors
+                    )
+                )
+            )
         }
 
         route("/form") {
