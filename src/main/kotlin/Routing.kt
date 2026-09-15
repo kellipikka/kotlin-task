@@ -8,6 +8,7 @@ import io.ktor.server.http.content.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.server.thymeleaf.*
 
 fun Application.configureRouting() {
@@ -25,8 +26,19 @@ fun Application.configureRouting() {
                 val terms = formContent["terms"]
 
                 val agreedToTerms = if (terms == "on") 1 else 0
-                val formResponseId =
-                    FormResponseRepository.saveResponse(FormResponse(name = name, agreedToTerms = agreedToTerms))
+                val formSession = call.sessions.get<FormSession>()
+                val formResponseId = FormResponseRepository.saveResponse(
+                    FormResponse(
+                        id = formSession?.formResponseId,
+                        name = name,
+                        agreedToTerms = agreedToTerms,
+                    )
+                )
+
+                if (formSession == null) {
+                    call.sessions.set(FormSession(formResponseId))
+                }
+
                 FormResponseSectorRepository.saveSectors(formResponseId, sectors)
                 call.respondRedirect("/")
             }

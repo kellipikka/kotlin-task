@@ -9,7 +9,12 @@ ktor:
       - ee.kpikka.ThymeleafKt.configureThymeleaf
       - ee.kpikka.RoutingKt.configureRouting
       - ee.kpikka.SerializationKt.configureSerialization
+      - ee.kpikka.SessionsKt.configureSession
   development: true
 
 database:
   jdbcUrl: "$DATABASE_JDBC_URL:jdbc:sqlite:./data/app.db"
+
+# I would normally keep this like signingKey: "$SESSION_SIGNING_KEY" but this way it is easier to set up
+session:
+  signingKey: "f071d33964746323c24893ead78c4c883e86b71379d80a624cec790c69ab3921"

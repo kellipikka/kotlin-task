@@ -29,6 +29,7 @@ dependencies {
     implementation(ktorLibs.server.contentNegotiation)
     implementation(ktorLibs.server.di)
     implementation(ktorLibs.serialization.kotlinx.json)
+    implementation(ktorLibs.server.sessions)
 
     testImplementation(kotlin("test"))
     testImplementation(ktorLibs.server.testHost)
