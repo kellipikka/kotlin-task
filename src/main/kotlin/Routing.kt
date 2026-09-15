@@ -33,15 +33,14 @@ fun Application.configureRouting() {
 
                 val name = formContent["name"] ?: ""
                 val sectors = formContent.getAll("sectors") ?: emptyList()
-                val terms = formContent["terms"]
+                val terms = formContent["terms"]?.toInt() ?: 0
 
-                val agreedToTerms = if (terms == "on") 1 else 0
                 val formSession = call.sessions.get<FormSession>()
                 val formResponseId = FormResponseRepository.saveResponse(
                     FormResponse(
                         id = formSession?.formResponseId,
                         name = name,
-                        agreedToTerms = agreedToTerms,
+                        agreedToTerms = terms,
                     )
                 )
 
