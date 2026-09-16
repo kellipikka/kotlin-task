@@ -2,19 +2,23 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Form</title>
     <link href="/static/styles.css" rel="stylesheet">
 </head>
 <body>
-<div>
-    <p>Please enter your name and pick the Sectors you are currently involved in.</p>
+<main class="form-card">
+    <header>
+        <p class="intro">Please enter your name and select the sectors you are currently involved in.</p>
+    </header>
+
     <form action="/form" method="post">
-        <label>Name: <span style="color: darkred">*</span>
-            <input autocomplete="name" id="name" maxlength="100" name="name" required
-                   th:value="${response.name}" type="text">
-        </label>
-        <label for="sectors">Sectors: <span style="color: darkred">*</span></label>
-        <select aria-describedby="sectors-hint" id="sectors" multiple name="sectors" required size="5">
+        <label for="name">Name <span aria-hidden="true" class="required">*</span></label>
+        <input autocomplete="name" id="name" maxlength="100" name="name" required
+               th:value="${response.name}" type="text">
+
+        <label for="sectors">Sectors <span aria-hidden="true" class="required">*</span></label>
+        <select aria-describedby="sectors-hint" id="sectors" multiple name="sectors" required size="8">
             <option
                     th:disabled="${!sector.isSelectable}"
                     th:each="sector : ${sectors}"
@@ -23,17 +27,17 @@
                     th:value="${sector.id}"
             ></option>
         </select>
-        <small id="sectors-hint">Categories with sub-sectors cannot be selected, choose a specific sub-sector
+        <small id="sectors-hint">Categories with sub-sectors cannot be selected. Choose a specific sub-sector
             instead.</small>
 
         <label class="terms" for="terms">
             <input id="terms" name="terms" required th:checked="${response.agreedToTerms == 1}" type="checkbox"
                    value="1">
-            Agree to terms <span style="color: darkred">*</span>
+            <span>Agree to terms <span aria-hidden="true" class="required">*</span></span>
         </label>
 
-        <input type="submit" value="Save">
+        <button type="submit">Save</button>
     </form>
-</div>
+</main>
 </body>
 </html>
