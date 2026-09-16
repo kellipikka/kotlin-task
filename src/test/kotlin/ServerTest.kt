@@ -1,5 +1,6 @@
 package ee.kpikka
 
+import ee.kpikka.db.withTransaction
 import ee.kpikka.model.Sector
 import ee.kpikka.repository.FormResponseRepository
 import ee.kpikka.service.FormService
@@ -10,10 +11,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import java.nio.file.Files
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
+import kotlin.test.*
 
 class ServerTest {
 
@@ -74,6 +72,22 @@ class ServerTest {
             .flatMap { sector -> listOf(sector) + hierarchicallySorted(sector.id) }
 
         assertEquals(hierarchicallySorted(null), sectors)
+    }
+
+    @Test
+    fun `database requires agreement to terms`() = withTestApplication {
+        startApplication()
+
+        assertNotNull(
+            databaseFailure(
+                "INSERT INTO form_responses (name, agreed_to_terms) VALUES ('Missing agreement', NULL)"
+            )
+        )
+        assertNotNull(
+            databaseFailure(
+                "INSERT INTO form_responses (name, agreed_to_terms) VALUES ('Declined agreement', 0)"
+            )
+        )
     }
 
     @Test
@@ -245,6 +259,13 @@ class ServerTest {
             ?.groupValues
             ?.get(1)
             ?.ifEmpty { name }
+
+    private suspend fun databaseFailure(statement: String): Throwable? = try {
+        withTransaction { exec(statement) }
+        null
+    } catch (cause: Throwable) {
+        cause
+    }
 
     private fun withTestApplication(test: suspend ApplicationTestBuilder.() -> Unit) {
         val database = Files.createTempFile("helmes-kotlin-test-", ".db")
