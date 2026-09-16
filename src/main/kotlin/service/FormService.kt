@@ -1,31 +1,54 @@
 package ee.kpikka.service
 
 import ee.kpikka.model.FormResponse
+import ee.kpikka.model.request.FormRequest
 import ee.kpikka.repository.FormResponseRepository
-import io.ktor.http.*
 
 object FormService {
     suspend fun getExistingOrNewFormResponse(responseId: Int?): FormResponse {
         return responseId?.let { FormResponseRepository.getResponse(it) } ?: FormResponse(
             name = "",
-            agreedToTerms = 0
+            agreedToTerms = 0,
+            sectorIds = emptyList(),
         )
     }
 
-    suspend fun postFormResponse(formContent: Parameters, responseId: Int?): Int {
-        val name = formContent["name"] ?: ""
-        val sectors = formContent.getAll("sectors")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
-        val terms = formContent["terms"]?.toInt() ?: 0
+    suspend fun postFormResponse(formRequest: FormRequest, responseId: Int?): Int {
+        val submittedSectorIds = formRequest.sectorIds.distinct()
+        val sectors = SectorService.filterSelectableSectorIds(submittedSectorIds)
 
+        validateFormRequest(formRequest, submittedSectorIds, sectors)
         val formResponseId = FormResponseRepository.saveResponse(
             FormResponse(
                 id = responseId,
-                name = name,
-                agreedToTerms = terms,
+                name = formRequest.name.trim(),
+                agreedToTerms = formRequest.agreedToTerms,
                 sectorIds = sectors
             )
         )
 
         return formResponseId
+    }
+
+    private fun validateFormRequest(
+        formRequest: FormRequest,
+        submittedSectorIds: List<Int>,
+        validSectors: List<Int>,
+    ) {
+        val name = formRequest.name.trim()
+
+        require(name.isNotBlank()) { "Name cannot be empty." }
+        require(name.length <= 100) { "Name must not exceed 100 characters." }
+        require(name.matches(Regex("^[a-zA-ZõäöüÕÄÖÜ -]+$"))) {
+            "Name contains invalid characters. Only letters, spaces, and hyphens are allowed."
+        }
+
+        require(formRequest.agreedToTerms == 1) { "You must agree to the terms." }
+
+        require(validSectors.isNotEmpty()) { "Selected sectors are invalid." }
+
+        require(validSectors.size == submittedSectorIds.size) {
+            "One or more selected sectors are invalid or cannot be chosen."
+        }
     }
 }

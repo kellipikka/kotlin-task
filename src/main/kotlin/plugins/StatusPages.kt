@@ -7,6 +7,9 @@ import io.ktor.server.response.*
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
+        exception<IllegalArgumentException> { call, cause ->
+            call.respondText(text = "Validation error: ${cause.message}", status = HttpStatusCode.BadRequest)
+        }
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
         }
