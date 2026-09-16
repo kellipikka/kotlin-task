@@ -1,37 +1,53 @@
 package ee.kpikka.repository
 
-import ee.kpikka.db.FormResponseSectorTable
-import ee.kpikka.db.FormResponseSectorTable.formResponseId
-import ee.kpikka.db.FormResponseTable
+import ee.kpikka.db.table.FormResponseSectorTable
+import ee.kpikka.db.table.FormResponseSectorTable.formResponseId
+import ee.kpikka.db.table.FormResponseTable
 import ee.kpikka.db.withTransaction
 import ee.kpikka.model.FormResponse
 import org.jetbrains.exposed.v1.core.*
-import org.jetbrains.exposed.v1.jdbc.insertAndGetId
-import org.jetbrains.exposed.v1.jdbc.select
-import org.jetbrains.exposed.v1.jdbc.update
+import org.jetbrains.exposed.v1.jdbc.*
 
 object FormResponseRepository {
-    suspend fun saveResponse(formResponse: FormResponse): Int = formResponse.id
-        ?.let { id ->
-            updateResponse(id, formResponse)
-            id
-        }
-        ?: createResponse(formResponse)
+    suspend fun saveResponse(formResponse: FormResponse): Int = withTransaction {
+        val formResponseId = formResponse.id
+            ?.let { id ->
+                updateResponse(id, formResponse)
+                id
+            }
+            ?: createResponse(formResponse)
 
-    private suspend fun createResponse(formResponse: FormResponse): Int = withTransaction {
-        FormResponseTable.insertAndGetId {
+        saveSectors(formResponseId, formResponse.sectorIds)
+        formResponseId
+    }
+
+    private fun createResponse(formResponse: FormResponse): Int {
+        return FormResponseTable.insertAndGetId {
             it[name] = formResponse.name
             it[agreedToTerms] = formResponse.agreedToTerms
         }.value
     }
 
-    private suspend fun updateResponse(id: Int, formResponse: FormResponse) = withTransaction {
+    private fun updateResponse(id: Int, formResponse: FormResponse) {
         val updatedRows = FormResponseTable.update({ FormResponseTable.id eq id }) {
             it[name] = formResponse.name
             it[agreedToTerms] = formResponse.agreedToTerms
         }
 
         check(updatedRows == 1) { "Form response $id does not exist" }
+    }
+
+    private fun saveSectors(formResponseId: Int, sectorIds: List<Int>) {
+        val uniqueSectorIds = sectorIds.distinct()
+
+        FormResponseSectorTable.deleteWhere {
+            FormResponseSectorTable.formResponseId eq formResponseId
+        }
+
+        FormResponseSectorTable.batchInsert(uniqueSectorIds) { sectorId ->
+            this[FormResponseSectorTable.formResponseId] = formResponseId
+            this[FormResponseSectorTable.sectorId] = sectorId
+        }
     }
 
     suspend fun getResponse(id: Int): FormResponse? = withTransaction {

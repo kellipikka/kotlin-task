@@ -1,7 +1,7 @@
 package ee.kpikka.repository
 
-import ee.kpikka.db.SectorDAO.Companion.all
-import ee.kpikka.db.daoToModel
+import ee.kpikka.db.table.SectorDAO.Companion.all
+import ee.kpikka.db.table.daoToModel
 import ee.kpikka.db.withTransaction
 import ee.kpikka.model.Sector
 

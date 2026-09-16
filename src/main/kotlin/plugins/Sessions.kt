@@ -1,4 +1,4 @@
-package ee.kpikka
+package ee.kpikka.plugins
 
 import io.ktor.server.application.*
 import io.ktor.server.sessions.*
