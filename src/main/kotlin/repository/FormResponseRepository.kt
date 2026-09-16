@@ -1,8 +1,8 @@
 package ee.kpikka.repository
 
-import ee.kpikka.db.FormResponseSectorTable
-import ee.kpikka.db.FormResponseSectorTable.formResponseId
-import ee.kpikka.db.FormResponseTable
+import ee.kpikka.db.table.FormResponseSectorTable
+import ee.kpikka.db.table.FormResponseSectorTable.formResponseId
+import ee.kpikka.db.table.FormResponseTable
 import ee.kpikka.db.withTransaction
 import ee.kpikka.model.FormResponse
 import org.jetbrains.exposed.v1.core.*
@@ -37,8 +37,8 @@ object FormResponseRepository {
         check(updatedRows == 1) { "Form response $id does not exist" }
     }
 
-    private fun saveSectors(formResponseId: Int, sectorIds: List<String>) {
-        val uniqueSectorIds = sectorIds.map(String::toInt).distinct()
+    private fun saveSectors(formResponseId: Int, sectorIds: List<Int>) {
+        val uniqueSectorIds = sectorIds.distinct()
 
         FormResponseSectorTable.deleteWhere {
             FormResponseSectorTable.formResponseId eq formResponseId
