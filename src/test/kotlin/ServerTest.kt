@@ -126,6 +126,8 @@ class ServerTest {
         assertEquals("Ada Lovelace", attribute(openingTag(page, "name"), "value"))
         assertEquals("selected", attribute(optionTag(page, 271), "selected"))
         assertEquals("selected", attribute(optionTag(page, 576), "selected"))
+        assertContains(optionText(page, 271), "✓")
+        assertContains(optionText(page, 576), "✓")
         assertEquals("checked", attribute(openingTag(page, "terms"), "checked"))
     }
 
@@ -339,6 +341,16 @@ class ServerTest {
     private fun optionTag(html: String, value: Int): String =
         requireNotNull(Regex("<option\\b[^>]*\\bvalue=\"$value\"[^>]*>").find(html)?.value) {
             "Could not find <option> with value '$value'"
+        }
+
+    private fun optionText(html: String, value: Int): String =
+        requireNotNull(
+            Regex("<option\\b[^>]*\\bvalue=\"$value\"[^>]*>(.*?)</option>", RegexOption.DOT_MATCHES_ALL)
+                .find(html)
+                ?.groupValues
+                ?.get(1)
+        ) {
+            "Could not find option text for value '$value'"
         }
 
     private fun attribute(tag: String, name: String): String? =

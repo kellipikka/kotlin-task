@@ -23,7 +23,7 @@
                     th:disabled="${!sector.isSelectable}"
                     th:each="sector : ${sectors}"
                     th:selected="${response.sectorIds.contains(sector.id)}"
-                    th:text="${sector.label}"
+                    th:text="${sector.label + (response.sectorIds.contains(sector.id) ? ' ✓' : '')}"
                     th:value="${sector.id}"
             ></option>
         </select>
@@ -39,5 +39,14 @@
         <button type="submit">Save</button>
     </form>
 </main>
+<script>
+    const sectors = document.getElementById("sectors");
+
+    sectors.addEventListener("change", () => {
+        for (const option of sectors.options) {
+            option.textContent = option.textContent.replace(/ ✓$/, "") + (option.selected ? " ✓" : "");
+        }
+    });
+</script>
 </body>
 </html>
