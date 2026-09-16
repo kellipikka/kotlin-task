@@ -1,7 +1,11 @@
 # Task for the jr. Kotlin software engineer
 
-## Features
+## Deliverables
 
+* **Source code:** Provided in this repository.
+* **Database dump:** The requested database dump (structure and data) can be found in `./database/database_dump.sql`. If
+  data accumulated in DB during testing should be included in there, just let me know :)
+* **AI usage overview:** An overview of AI usage can be found in `./ai/USAGE.md`
 
 ## Building & Running
 
