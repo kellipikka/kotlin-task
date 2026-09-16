@@ -4,48 +4,26 @@
     <meta charset="UTF-8">
     <title>Form</title>
     <link href="/static/styles.css" rel="stylesheet">
-    <script type="application/javascript">
-        document.addEventListener('DOMContentLoaded', () => {
-            const sectors = document.getElementById('sectors')
-
-            fetch(
-                "/sectors",
-                {headers: {'Accept': 'application/json'}}
-            ).then(response => {
-                return response.json()
-            }).then(data => {
-                const depthBySectorId = new Map()
-
-                data.forEach(sector => {
-                    const isRoot = sector.parentId === null || sector.parentId === undefined
-                    const depth = isRoot
-                        ? 0
-                        : (depthBySectorId.get(sector.parentId) ?? 0) + 1
-                    const option = document.createElement('option');
-
-                    depthBySectorId.set(sector.id, depth)
-                    option.setAttribute('value', sector.id)
-                    option.textContent = depth === 0
-                        ? sector.name
-                        : `${'\u00a0\u00a0\u00a0'.repeat(depth)} ${sector.name}`
-                    sectors.appendChild(option)
-                })
-            })
-        })
-    </script>
 </head>
 <body>
 <div>
     <p>Please enter your name and pick the Sectors you are currently involved in.</p>
-    <form>
+    <form action="/form" method="post">
         <label>Name:
-            <input id="name" name="name" type="text">
+            <input id="name" name="name" th:value="${response.name}" type="text">
         </label>
         <label for="sectors">Sectors:</label>
-        <select id="sectors" multiple name="sectors" size="5"></select>
+        <select id="sectors" multiple name="sectors" size="5">
+            <option
+                    th:each="sector : ${sectors}"
+                    th:selected="${response.sectorIds.contains(sector.id)}"
+                    th:text="${sector.label}"
+                    th:value="${sector.id}"
+            ></option>
+        </select>
 
         <label class="terms" for="terms">
-            <input id="terms" name="terms" type="checkbox">
+            <input id="terms" name="terms" th:checked="${response.agreedToTerms == 1}" type="checkbox" value="1">
             Agree to terms
         </label>
 

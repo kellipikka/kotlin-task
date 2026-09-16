@@ -5,7 +5,7 @@ import ee.kpikka.db.daoToModel
 import ee.kpikka.db.withTransaction
 import ee.kpikka.model.Sector
 
-class SectorRepository {
+object SectorRepository {
     suspend fun getSectors(): List<Sector> = withTransaction {
         all()
             .map(::daoToModel)

@@ -3,6 +3,7 @@ package ee.kpikka.db
 import ee.kpikka.model.Sector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.dao.IntEntity
@@ -20,6 +21,16 @@ class SectorDAO(id: EntityID<Int>) : IntEntity(id) {
 
     var name by SectorsTable.name
     var parentId by SectorsTable.parentId
+}
+
+object FormResponseTable : IntIdTable("form_responses") {
+    var name = varchar("name", 100)
+    val agreedToTerms = integer("agreed_to_terms").default(0)
+}
+
+object FormResponseSectorTable : Table("form_response_sector") {
+    val formResponseId = reference("form_response_id", FormResponseTable.id)
+    val sectorId = reference("sector_id", SectorsTable.id)
 }
 
 suspend fun <T> withTransaction(block: suspend JdbcTransaction.() -> T): T = withContext(Dispatchers.IO) {
