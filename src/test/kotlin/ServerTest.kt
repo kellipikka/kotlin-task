@@ -239,6 +239,58 @@ class ServerTest {
         assertNull(FormResponseRepository.getResponse(1))
     }
 
+    @Test
+    fun `blank name returns a validation error`() = withTestApplication {
+        val response = submitInvalidForm(
+            parameters {
+                append("name", "  ")
+                append("sectors", "271")
+                append("terms", "1")
+            }
+        )
+        assertEquals("Validation error: Name cannot be empty.", response.bodyAsText())
+        assertNull(FormResponseRepository.getResponse(1))
+    }
+
+    @Test
+    fun `missing name returns a validation error`() = withTestApplication {
+        val response = submitInvalidForm(
+            parameters {
+                append("sectors", "271")
+                append("terms", "1")
+            }
+        )
+
+        assertEquals("Validation error: Name cannot be empty.", response.bodyAsText())
+        assertNull(FormResponseRepository.getResponse(1))
+    }
+
+    @Test
+    fun `missing sectors returns a validation error`() = withTestApplication {
+        val response = submitInvalidForm(
+            parameters {
+                append("name", "Ada")
+                append("terms", "1")
+            }
+        )
+
+        assertEquals("Validation error: At least one sector must be selected.", response.bodyAsText())
+        assertNull(FormResponseRepository.getResponse(1))
+    }
+
+    @Test
+    fun `missing terms returns a validation error`() = withTestApplication {
+        val response = submitInvalidForm(
+            parameters {
+                append("name", "Ada")
+                append("sectors", "271")
+            }
+        )
+
+        assertEquals("Validation error: You must agree to the terms.", response.bodyAsText())
+        assertNull(FormResponseRepository.getResponse(1))
+    }
+
     private suspend fun ApplicationTestBuilder.submitForm(
         formParameters: Parameters,
         sessionCookie: String? = null,

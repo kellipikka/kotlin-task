@@ -39,9 +39,9 @@ object FormService {
 
         require(name.isNotBlank()) { "Name cannot be empty." }
         require(name.length <= 100) { "Name must not exceed 100 characters." }
-
         require(formRequest.agreedToTerms == 1) { "You must agree to the terms." }
-
+        require(formRequest.sectorIds.isNotEmpty()) { "At least one sector must be selected." }
+        require(formRequest.sectorIds.size <= 100) { "No more than 100 sectors can be selected." }
         require(validSectors.isNotEmpty()) { "Selected sectors are invalid." }
 
         require(validSectors.size == submittedSectorIds.size) {
