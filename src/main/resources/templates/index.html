@@ -9,11 +9,11 @@
 <div>
     <p>Please enter your name and pick the Sectors you are currently involved in.</p>
     <form action="/form" method="post">
-        <label>Name:
-            <input id="name" name="name" th:value="${response.name}" type="text">
+        <label>Name: <span style="color: darkred">*</span>
+            <input id="name" name="name" required th:value="${response.name}" type="text">
         </label>
-        <label for="sectors">Sectors:</label>
-        <select id="sectors" multiple name="sectors" size="5">
+        <label for="sectors">Sectors: <span style="color: darkred">*</span></label>
+        <select id="sectors" multiple name="sectors" required size="5">
             <option
                     th:each="sector : ${sectors}"
                     th:selected="${response.sectorIds.contains(sector.id)}"
@@ -23,8 +23,9 @@
         </select>
 
         <label class="terms" for="terms">
-            <input id="terms" name="terms" th:checked="${response.agreedToTerms == 1}" type="checkbox" value="1">
-            Agree to terms
+            <input id="terms" name="terms" required th:checked="${response.agreedToTerms == 1}" type="checkbox"
+                   value="1">
+            Agree to terms <span style="color: darkred">*</span>
         </label>
 
         <input type="submit" value="Save">
