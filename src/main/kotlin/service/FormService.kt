@@ -14,7 +14,8 @@ object FormService {
 
     suspend fun postFormResponse(formContent: Parameters, responseId: Int?): Int {
         val name = formContent["name"] ?: ""
-        val sectors = formContent.getAll("sectors")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
+        val submittedSectorIds = formContent.getAll("sectors")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
+        val sectors = SectorService.filterSelectableSectorIds(submittedSectorIds)
         val terms = formContent["terms"]?.toInt() ?: 0
 
         val formResponseId = FormResponseRepository.saveResponse(

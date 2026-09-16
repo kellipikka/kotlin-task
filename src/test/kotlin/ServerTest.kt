@@ -27,6 +27,15 @@ class ServerTest {
     }
 
     @Test
+    fun `parent sectors are disabled and explain that a sub-sector is required`() = withTestApplication {
+        val page = client.get("/").bodyAsText()
+
+        assertEquals("disabled", attribute(optionTag(page, 1), "disabled"))
+        assertContains(page, "Categories with sub-sectors cannot be selected")
+        assertNull(attribute(optionTag(page, 271), "disabled"))
+    }
+
+    @Test
     fun `missing form response falls back to a blank form`() = withTestApplication {
         startApplication()
 
@@ -127,6 +136,19 @@ class ServerTest {
             parameters {
                 append("name", "Ada")
                 append("sectors", "271")
+                append("sectors", "271")
+            }
+        )
+
+        assertEquals(listOf(271), FormResponseRepository.getResponse(1)?.sectorIds)
+    }
+
+    @Test
+    fun `submitting a parent sector directly does not store it`() = withTestApplication {
+        submitForm(
+            parameters {
+                append("name", "Ada")
+                append("sectors", "1")
                 append("sectors", "271")
             }
         )

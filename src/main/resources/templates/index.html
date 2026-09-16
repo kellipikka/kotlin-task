@@ -13,14 +13,17 @@
             <input id="name" name="name" required th:value="${response.name}" type="text">
         </label>
         <label for="sectors">Sectors: <span style="color: darkred">*</span></label>
-        <select id="sectors" multiple name="sectors" required size="5">
+        <select aria-describedby="sectors-hint" id="sectors" multiple name="sectors" required size="5">
             <option
+                    th:disabled="${!sector.isSelectable}"
                     th:each="sector : ${sectors}"
                     th:selected="${response.sectorIds.contains(sector.id)}"
                     th:text="${sector.label}"
                     th:value="${sector.id}"
             ></option>
         </select>
+        <small id="sectors-hint">Categories with sub-sectors cannot be selected, choose a specific sub-sector
+            instead.</small>
 
         <label class="terms" for="terms">
             <input id="terms" name="terms" required th:checked="${response.agreedToTerms == 1}" type="checkbox"
