@@ -19,7 +19,7 @@ object FormService {
 
     suspend fun postFormResponse(formContent: Parameters, responseId: Int?): Int {
         val name = formContent["name"] ?: ""
-        val sectors = formContent.getAll("sectors") ?: emptyList()
+        val sectors = formContent.getAll("sectors")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
         val terms = formContent["terms"]?.toInt() ?: 0
 
         val formResponseId = FormResponseRepository.saveResponse(
@@ -27,9 +27,9 @@ object FormService {
                 id = responseId,
                 name = name,
                 agreedToTerms = terms,
+                sectorIds = sectors
             )
         )
-        FormResponseRepository.saveSectors(formResponseId, sectors)
 
         return formResponseId
     }

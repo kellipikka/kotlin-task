@@ -9,21 +9,26 @@ import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.jdbc.*
 
 object FormResponseRepository {
-    suspend fun saveResponse(formResponse: FormResponse): Int = formResponse.id
-        ?.let { id ->
-            updateResponse(id, formResponse)
-            id
-        }
-        ?: createResponse(formResponse)
+    suspend fun saveResponse(formResponse: FormResponse): Int = withTransaction {
+        val formResponseId = formResponse.id
+            ?.let { id ->
+                updateResponse(id, formResponse)
+                id
+            }
+            ?: createResponse(formResponse)
 
-    private suspend fun createResponse(formResponse: FormResponse): Int = withTransaction {
-        FormResponseTable.insertAndGetId {
+        saveSectors(formResponseId, formResponse.sectorIds)
+        formResponseId
+    }
+
+    private fun createResponse(formResponse: FormResponse): Int {
+        return FormResponseTable.insertAndGetId {
             it[name] = formResponse.name
             it[agreedToTerms] = formResponse.agreedToTerms
         }.value
     }
 
-    private suspend fun updateResponse(id: Int, formResponse: FormResponse) = withTransaction {
+    private fun updateResponse(id: Int, formResponse: FormResponse) {
         val updatedRows = FormResponseTable.update({ FormResponseTable.id eq id }) {
             it[name] = formResponse.name
             it[agreedToTerms] = formResponse.agreedToTerms
@@ -32,7 +37,7 @@ object FormResponseRepository {
         check(updatedRows == 1) { "Form response $id does not exist" }
     }
 
-    suspend fun saveSectors(formResponseId: Int, sectorIds: List<String>) = withTransaction {
+    private fun saveSectors(formResponseId: Int, sectorIds: List<String>) {
         val uniqueSectorIds = sectorIds.map(String::toInt).distinct()
 
         FormResponseSectorTable.deleteWhere {
