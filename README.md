@@ -1,22 +1,29 @@
-# helmes-kotlin
+# Task for the jr. Kotlin software engineer
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+## Deliverables
 
-Here are some useful links to get you started:
+* **Source code:** Provided in this repository.
+* **Database dump:** The requested database dump (structure and data) can be found in `./database/database_dump.sql`. If
+  data accumulated in DB during testing should be included in there, just let me know :)
+* **AI usage overview:** An overview of AI usage can be found in `./ai/USAGE.md`
 
-* [Ktor Documentation](https://ktor.io/docs/home.html)
-* [Ktor GitHub page](https://github.com/ktorio/ktor)
-* [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). [Request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up).
+## Task Checklist
 
-## Features
+- [x] Correct deficiencies in `index.html`
+- [x] Sectors selectbox populated from the database
+- [x] Validate all input data (mandatory fields)
+- [x] Store Name, Sectors, and Terms agreement to database
+- [x] Refill the form using stored data
+- [x] Allow user to edit data during the session
 
-Here's a list of features included in this project:
+## Implementation Notes
 
-| Name                                                                    | Description                                    |
-|-------------------------------------------------------------------------|------------------------------------------------|
-| [Status Pages](https://start.ktor.io/p/io.ktor/server-status-pages)     | Provides exception handling for routes         |
-| [Static Content](https://start.ktor.io/p/io.ktor/server-static-content) | Serves static files from defined locations     |
-| [Thymeleaf](https://start.ktor.io/p/io.ktor/server-thymeleaf)           | Serves HTML content, templated using Thymeleaf |
+- The application uses Ktor with server-rendered Thymeleaf templates.
+- SQLite persistence is implemented with Exposed. Flyway migrations create the schema and seed the sector hierarchy.
+- Form submissions are validated on the server. Only selectable "child" sectors are accepted. This constraint on
+  sectors was implemented due to the logic that choosing a "parent" sector does not make sense as there should be a more
+  specific choice amongst the sub-sectors.
+- A signed cookie stores the saved response ID so the same browser session can reload and update its submission.
 
 ## Building & Running
 
@@ -26,18 +33,20 @@ The quickest way to start the application is with the Gradle wrapper. This requi
 ./gradlew run
 ```
 
-Open http://localhost:8080 after the application starts. The remaining build tasks are:
-
-| Task              | Description       |
-|-------------------|-------------------|
-| `./gradlew test`  | Run the tests     |
-| `./gradlew build` | Build the project |
+Open http://localhost:8080 after the application starts.
 
 If the server starts successfully, you'll see the following output:
 
 ```
 2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
 2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+```
+
+There are also commands for testing and building the project:
+
+```shell
+./gradlew test
+./gradlew build
 ```
 
 ### Database configuration
