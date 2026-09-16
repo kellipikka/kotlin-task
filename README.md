@@ -7,6 +7,15 @@
   data accumulated in DB during testing should be included in there, just let me know :)
 * **AI usage overview:** An overview of AI usage can be found in `./ai/USAGE.md`
 
+## Task Checklist
+
+- [x] Correct deficiencies in `index.html`
+- [x] Sectors selectbox populated from the database
+- [x] Validate all input data (mandatory fields)
+- [x] Store Name, Sectors, and Terms agreement to database
+- [x] Refill the form using stored data
+- [x] Allow user to edit data during the session
+
 ## Building & Running
 
 The quickest way to start the application is with the Gradle wrapper. This requires Java 25:
