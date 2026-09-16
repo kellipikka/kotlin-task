@@ -175,6 +175,20 @@ class ServerTest {
         assertNull(FormResponseRepository.getResponse(1))
     }
 
+    @Test
+    fun `submitting more than one hundred sectors rejects the form before deduplication`() = withTestApplication {
+        val response = submitInvalidForm(
+            parameters {
+                append("name", "Ada")
+                repeat(101) { append("sectors", "271") }
+                append("terms", "1")
+            }
+        )
+
+        assertContains(response.bodyAsText(), "No more than 100 sectors can be selected")
+        assertNull(FormResponseRepository.getResponse(1))
+    }
+
     private suspend fun ApplicationTestBuilder.submitForm(
         formParameters: Parameters,
         sessionCookie: String? = null,
