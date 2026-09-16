@@ -3,12 +3,12 @@ ktor:
     port: "$PORT:8080"
   application:
     modules:
-      - ee.kpikka.ExposedKt.configureDatabase
-      - ee.kpikka.StatusPagesKt.configureStatusPages
-      - ee.kpikka.ThymeleafKt.configureThymeleaf
-      - ee.kpikka.RoutingKt.configureRouting
-      - ee.kpikka.SerializationKt.configureSerialization
-      - ee.kpikka.SessionsKt.configureSession
+      - ee.kpikka.plugins.ExposedKt.configureDatabase
+      - ee.kpikka.plugins.StatusPagesKt.configureStatusPages
+      - ee.kpikka.plugins.ThymeleafKt.configureThymeleaf
+      - ee.kpikka.plugins.RoutingKt.configureRouting
+      - ee.kpikka.plugins.SerializationKt.configureSerialization
+      - ee.kpikka.plugins.SessionsKt.configureSession
   development: true
 
 database:
