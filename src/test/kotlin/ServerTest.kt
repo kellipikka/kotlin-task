@@ -110,6 +110,7 @@ class ServerTest {
             parameters {
                 append("name", "Updated name")
                 append("sectors", "576")
+                append("terms", "1")
             },
             sessionCookie
         )
@@ -118,13 +119,13 @@ class ServerTest {
         assertEquals("Updated name", attribute(openingTag(page, "name"), "value"))
         assertNull(attribute(optionTag(page, 271), "selected"))
         assertEquals("selected", attribute(optionTag(page, 576), "selected"))
-        assertNull(attribute(openingTag(page, "terms"), "checked"))
+        assertEquals("checked", attribute(openingTag(page, "terms"), "checked"))
     }
 
     @Test
     fun `form values are isolated between sessions`() = withTestApplication {
-        val adaSession = sessionCookieFrom(submitForm(parameters { append("name", "Ada") }))
-        val graceSession = sessionCookieFrom(submitForm(parameters { append("name", "Grace") }))
+        val adaSession = sessionCookieFrom(submitForm(validFormParameters("Ada")))
+        val graceSession = sessionCookieFrom(submitForm(validFormParameters("Grace")))
 
         assertEquals("Ada", attribute(openingTag(getForm(adaSession), "name"), "value"))
         assertEquals("Grace", attribute(openingTag(getForm(graceSession), "name"), "value"))
@@ -137,6 +138,7 @@ class ServerTest {
                 append("name", "Ada")
                 append("sectors", "271")
                 append("sectors", "271")
+                append("terms", "1")
             }
         )
 
@@ -144,28 +146,62 @@ class ServerTest {
     }
 
     @Test
-    fun `submitting a parent sector directly does not store it`() = withTestApplication {
-        submitForm(
+    fun `submitting a parent sector rejects the entire form`() = withTestApplication {
+        val response = submitInvalidForm(
             parameters {
                 append("name", "Ada")
                 append("sectors", "1")
                 append("sectors", "271")
+                append("terms", "1")
             }
         )
 
-        assertEquals(listOf(271), FormResponseRepository.getResponse(1)?.sectorIds)
+        assertContains(response.bodyAsText(), "One or more selected sectors are invalid")
+        assertNull(FormResponseRepository.getResponse(1))
+    }
+
+    @Test
+    fun `submitting a malformed sector rejects the entire form`() = withTestApplication {
+        val response = submitInvalidForm(
+            parameters {
+                append("name", "Ada")
+                append("sectors", "271")
+                append("sectors", "not-an-id")
+                append("terms", "1")
+            }
+        )
+
+        assertContains(response.bodyAsText(), "Sector IDs must be integers")
+        assertNull(FormResponseRepository.getResponse(1))
     }
 
     private suspend fun ApplicationTestBuilder.submitForm(
+        formParameters: Parameters,
+        sessionCookie: String? = null,
+    ) = postForm(formParameters, sessionCookie).also { response ->
+        assertEquals(HttpStatusCode.Found, response.status)
+        assertEquals("/", response.headers[HttpHeaders.Location])
+    }
+
+    private suspend fun ApplicationTestBuilder.submitInvalidForm(
+        formParameters: Parameters,
+    ) = postForm(formParameters).also { response ->
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+    }
+
+    private suspend fun ApplicationTestBuilder.postForm(
         formParameters: Parameters,
         sessionCookie: String? = null,
     ) = createClient {
         followRedirects = false
     }.submitForm("/form", formParameters) {
         sessionCookie?.let { header(HttpHeaders.Cookie, it) }
-    }.also { response ->
-        assertEquals(HttpStatusCode.Found, response.status)
-        assertEquals("/", response.headers[HttpHeaders.Location])
+    }
+
+    private fun validFormParameters(name: String) = parameters {
+        append("name", name)
+        append("sectors", "271")
+        append("terms", "1")
     }
 
     private suspend fun ApplicationTestBuilder.getForm(sessionCookie: String): String =
