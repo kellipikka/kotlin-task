@@ -2,7 +2,6 @@ package ee.kpikka.service
 
 import ee.kpikka.model.FormResponse
 import ee.kpikka.repository.FormResponseRepository
-import ee.kpikka.repository.FormResponseSectorRepository
 import io.ktor.http.*
 
 object FormService {
@@ -30,7 +29,7 @@ object FormService {
                 agreedToTerms = terms,
             )
         )
-        FormResponseSectorRepository.saveSectors(formResponseId, sectors)
+        FormResponseRepository.saveSectors(formResponseId, sectors)
 
         return formResponseId
     }

@@ -6,9 +6,7 @@ import ee.kpikka.db.FormResponseTable
 import ee.kpikka.db.withTransaction
 import ee.kpikka.model.FormResponse
 import org.jetbrains.exposed.v1.core.*
-import org.jetbrains.exposed.v1.jdbc.insertAndGetId
-import org.jetbrains.exposed.v1.jdbc.select
-import org.jetbrains.exposed.v1.jdbc.update
+import org.jetbrains.exposed.v1.jdbc.*
 
 object FormResponseRepository {
     suspend fun saveResponse(formResponse: FormResponse): Int = formResponse.id
@@ -32,6 +30,19 @@ object FormResponseRepository {
         }
 
         check(updatedRows == 1) { "Form response $id does not exist" }
+    }
+
+    suspend fun saveSectors(formResponseId: Int, sectorIds: List<String>) = withTransaction {
+        val uniqueSectorIds = sectorIds.map(String::toInt).distinct()
+
+        FormResponseSectorTable.deleteWhere {
+            FormResponseSectorTable.formResponseId eq formResponseId
+        }
+
+        FormResponseSectorTable.batchInsert(uniqueSectorIds) { sectorId ->
+            this[FormResponseSectorTable.formResponseId] = formResponseId
+            this[FormResponseSectorTable.sectorId] = sectorId
+        }
     }
 
     suspend fun getResponse(id: Int): FormResponse? = withTransaction {
