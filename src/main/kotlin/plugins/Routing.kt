@@ -1,4 +1,4 @@
-package ee.kpikka
+package ee.kpikka.plugins
 
 import ee.kpikka.model.FormResponse
 import ee.kpikka.model.toOptions
