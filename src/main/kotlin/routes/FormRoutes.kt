@@ -28,20 +28,18 @@ fun Route.formRoutes() {
         )
     }
 
-    route("/form") {
-        post {
-            val formContent = call.receiveParameters()
-            val formRequest = FormRequest.from(formContent)
+    post("/form") {
+        val formContent = call.receiveParameters()
+        val formRequest = FormRequest.from(formContent)
 
-            val formSession = call.sessions.get<FormSession>()
+        val formSession = call.sessions.get<FormSession>()
 
-            val formResponseId = FormService.postFormResponse(formRequest, formSession?.formResponseId)
+        val formResponseId = FormService.postFormResponse(formRequest, formSession?.formResponseId)
 
         if (formSession?.formResponseId != formResponseId) {
             call.sessions.set(FormSession(formResponseId))
         }
 
-            call.respondRedirect("/")
-        }
+        call.respondRedirect("/")
     }
 }
