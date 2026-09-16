@@ -1,11 +1,10 @@
 package ee.kpikka.routes
 
 import ee.kpikka.model.FormResponse
-import ee.kpikka.model.toOptions
 import ee.kpikka.plugins.FormSession
 import ee.kpikka.repository.FormResponseRepository
 import ee.kpikka.repository.FormResponseSectorRepository
-import ee.kpikka.repository.SectorRepository
+import ee.kpikka.service.SectorService
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -19,7 +18,7 @@ fun Route.formRoutes() {
             name = "",
             agreedToTerms = 0
         )
-        val sectors = SectorRepository.getSectors().toOptions()
+        val sectors = SectorService.getSectorOptions()
         call.respond(
             ThymeleafContent(
                 "index",
