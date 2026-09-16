@@ -14,6 +14,11 @@ application {
 kotlin {
     jvmToolchain(25)
 }
+
+tasks.withType<JavaExec> {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
 dependencies {
     implementation(ktorLibs.server.config.yaml)
     implementation(ktorLibs.server.core)
