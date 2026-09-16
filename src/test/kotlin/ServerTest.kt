@@ -9,6 +9,7 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.selectAll
@@ -53,6 +54,23 @@ class ServerTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertContains(response.bodyAsText(), "flex-direction: column")
+    }
+
+    @Test
+    fun `unexpected errors are logged without exposing details to the user`() = withTestApplication {
+        application {
+            routing {
+                get("/unexpected-error") {
+                    error("Sensitive internal detail")
+                }
+            }
+        }
+
+        val response = client.get("/unexpected-error")
+
+        assertEquals(HttpStatusCode.InternalServerError, response.status)
+        assertEquals("An unexpected error occurred. Please try again later.", response.bodyAsText())
+        assertFalse(response.bodyAsText().contains("Sensitive internal detail"))
     }
 
     @Test
