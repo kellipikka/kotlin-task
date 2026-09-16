@@ -1,22 +1,7 @@
-# helmes-kotlin
-
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
-
-Here are some useful links to get you started:
-
-* [Ktor Documentation](https://ktor.io/docs/home.html)
-* [Ktor GitHub page](https://github.com/ktorio/ktor)
-* [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). [Request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up).
+# Task for the jr. Kotlin software engineer
 
 ## Features
 
-Here's a list of features included in this project:
-
-| Name                                                                    | Description                                    |
-|-------------------------------------------------------------------------|------------------------------------------------|
-| [Status Pages](https://start.ktor.io/p/io.ktor/server-status-pages)     | Provides exception handling for routes         |
-| [Static Content](https://start.ktor.io/p/io.ktor/server-static-content) | Serves static files from defined locations     |
-| [Thymeleaf](https://start.ktor.io/p/io.ktor/server-thymeleaf)           | Serves HTML content, templated using Thymeleaf |
 
 ## Building & Running
 
