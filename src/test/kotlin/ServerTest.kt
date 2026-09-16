@@ -2,6 +2,7 @@ package ee.kpikka
 
 import ee.kpikka.model.Sector
 import ee.kpikka.repository.FormResponseRepository
+import ee.kpikka.service.FormService
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
@@ -23,6 +24,18 @@ class ServerTest {
         assertEquals(HttpStatusCode.OK, response.status)
         assertEquals(ContentType.Text.Html.withCharset(Charsets.UTF_8), response.contentType())
         assertContains(response.bodyAsText(), "<form")
+    }
+
+    @Test
+    fun `missing form response falls back to a blank form`() = withTestApplication {
+        startApplication()
+
+        val response = FormService.getExistingOrNewFormResponse(Int.MAX_VALUE)
+
+        assertNull(response.id)
+        assertEquals("", response.name)
+        assertEquals(0, response.agreedToTerms)
+        assertEquals(emptyList(), response.sectorIds)
     }
 
     @Test

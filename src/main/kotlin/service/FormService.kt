@@ -5,13 +5,8 @@ import ee.kpikka.repository.FormResponseRepository
 import io.ktor.http.*
 
 object FormService {
-    suspend fun getFormResponse(responseId: Int): FormResponse {
-        val response = FormResponseRepository.getResponse(responseId)
-        return checkNotNull(response) { "Response not found" }
-    }
-
     suspend fun getExistingOrNewFormResponse(responseId: Int?): FormResponse {
-        return responseId?.let { getFormResponse(it) } ?: FormResponse(
+        return responseId?.let { FormResponseRepository.getResponse(it) } ?: FormResponse(
             name = "",
             agreedToTerms = 0
         )
