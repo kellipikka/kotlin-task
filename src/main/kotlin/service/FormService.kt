@@ -39,9 +39,6 @@ object FormService {
 
         require(name.isNotBlank()) { "Name cannot be empty." }
         require(name.length <= 100) { "Name must not exceed 100 characters." }
-        require(name.matches(Regex("^[a-zA-ZõäöüÕÄÖÜ -]+$"))) {
-            "Name contains invalid characters. Only letters, spaces, and hyphens are allowed."
-        }
 
         require(formRequest.agreedToTerms == 1) { "You must agree to the terms." }
 

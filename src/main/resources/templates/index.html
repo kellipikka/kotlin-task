@@ -10,7 +10,8 @@
     <p>Please enter your name and pick the Sectors you are currently involved in.</p>
     <form action="/form" method="post">
         <label>Name: <span style="color: darkred">*</span>
-            <input id="name" name="name" required th:value="${response.name}" type="text">
+            <input autocomplete="name" id="name" maxlength="100" name="name" required
+                   th:value="${response.name}" type="text">
         </label>
         <label for="sectors">Sectors: <span style="color: darkred">*</span></label>
         <select aria-describedby="sectors-hint" id="sectors" multiple name="sectors" required size="5">
