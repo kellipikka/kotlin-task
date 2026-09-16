@@ -1,5 +1,6 @@
 package ee.kpikka
 
+import ee.kpikka.db.table.FormResponseTable
 import ee.kpikka.db.withTransaction
 import ee.kpikka.model.Sector
 import ee.kpikka.repository.FormResponseRepository
@@ -10,6 +11,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.v1.jdbc.selectAll
 import java.nio.file.Files
 import kotlin.test.*
 
@@ -134,6 +136,22 @@ class ServerTest {
         assertNull(attribute(optionTag(page, 271), "selected"))
         assertEquals("selected", attribute(optionTag(page, 576), "selected"))
         assertEquals("checked", attribute(openingTag(page, "terms"), "checked"))
+        assertEquals(1, withTransaction { FormResponseTable.selectAll().count() })
+    }
+
+    @Test
+    fun `stale session creates a new response and replaces its cookie`() = withTestApplication {
+        submitForm(validFormParameters("First"))
+        submitForm(validFormParameters("Second"))
+        val staleCookie = sessionCookieFrom(submitForm(validFormParameters("Third")))
+
+        withTransaction { exec("DELETE FROM form_responses") }
+
+        val replacement = submitForm(validFormParameters("Replacement"), staleCookie)
+        val replacementCookie = sessionCookieFrom(replacement)
+
+        assertNotEquals(replacementCookie, staleCookie)
+        assertEquals("Replacement", FormResponseRepository.getResponse(1)?.name)
     }
 
     @Test

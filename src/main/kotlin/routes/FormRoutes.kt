@@ -37,9 +37,9 @@ fun Route.formRoutes() {
 
             val formResponseId = FormService.postFormResponse(formRequest, formSession?.formResponseId)
 
-            if (formSession == null) {
-                call.sessions.set(FormSession(formResponseId))
-            }
+        if (formSession?.formResponseId != formResponseId) {
+            call.sessions.set(FormSession(formResponseId))
+        }
 
             call.respondRedirect("/")
         }

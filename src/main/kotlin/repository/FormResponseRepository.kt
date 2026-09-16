@@ -11,10 +11,7 @@ import org.jetbrains.exposed.v1.jdbc.*
 object FormResponseRepository {
     suspend fun saveResponse(formResponse: FormResponse): Int = withTransaction {
         val formResponseId = formResponse.id
-            ?.let { id ->
-                updateResponse(id, formResponse)
-                id
-            }
+            ?.takeIf { id -> updateResponse(id, formResponse) }
             ?: createResponse(formResponse)
 
         saveSectors(formResponseId, formResponse.sectorIds)
@@ -28,13 +25,11 @@ object FormResponseRepository {
         }.value
     }
 
-    private fun updateResponse(id: Int, formResponse: FormResponse) {
-        val updatedRows = FormResponseTable.update({ FormResponseTable.id eq id }) {
+    private fun updateResponse(id: Int, formResponse: FormResponse): Boolean {
+        return FormResponseTable.update({ FormResponseTable.id eq id }) {
             it[name] = formResponse.name
             it[agreedToTerms] = formResponse.agreedToTerms
-        }
-
-        check(updatedRows == 1) { "Form response $id does not exist" }
+        } == 1
     }
 
     private fun saveSectors(formResponseId: Int, sectorIds: List<Int>) {
