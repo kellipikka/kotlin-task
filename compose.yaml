@@ -3,12 +3,9 @@ services:
     build:
       context: .
     environment:
-      DATABASE_JDBC_URL: "${DATABASE_JDBC_URL:-jdbc:sqlite:/data/app.db}"
+      DATABASE_JDBC_URL: "${DATABASE_JDBC_URL:-jdbc:sqlite:./data/app.db}"
       PORT: "8080"
     ports:
       - "${APP_PORT:-8080}:8080"
     volumes:
-      - sqlite-data:/data
-
-volumes:
-  sqlite-data:
+      - ./data:/opt/app/data

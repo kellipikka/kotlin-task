@@ -50,7 +50,7 @@ DATABASE_JDBC_URL=jdbc:sqlite:/absolute/path/to/app.db ./gradlew run
 
 ### Running with Docker Compose
 
-Docker Compose builds and starts the application with its SQLite database stored in a persistent named volume:
+Docker Compose builds and starts the application with its SQLite database stored in the bind-mounted `./data` directory:
 
 ```shell
 docker compose up
