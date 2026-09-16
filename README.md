@@ -16,6 +16,15 @@
 - [x] Refill the form using stored data
 - [x] Allow user to edit data during the session
 
+## Implementation Notes
+
+- The application uses Ktor with server-rendered Thymeleaf templates.
+- SQLite persistence is implemented with Exposed. Flyway migrations create the schema and seed the sector hierarchy.
+- Form submissions are validated on the server. Only selectable "child" sectors are accepted. This constraint on
+  sectors was implemented due to the logic that choosing a "parent" sector does not make sense as there should be a more
+  specific choice amongst the sub-sectors.
+- A signed cookie stores the saved response ID so the same browser session can reload and update its submission.
+
 ## Building & Running
 
 The quickest way to start the application is with the Gradle wrapper. This requires Java 25:
